@@ -1,0 +1,204 @@
+Name:           cmus
+Version:        2.7.0
+Release:        2%{?dist}
+Summary:        Ncurses-Based Music Player
+License:        GPLv2+
+URL:            https://cmus.github.io/
+Source0:        https://github.com/cmus/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
+
+BuildRequires:  alsa-lib-devel
+BuildRequires:  faad2-devel
+BuildRequires:  ffmpeg-devel
+BuildRequires:  flac-devel
+BuildRequires:  libao-devel
+BuildRequires:  libcddb-devel
+BuildRequires:  libcue-devel
+BuildRequires:  libmad-devel
+BuildRequires:  libmodplug-devel
+BuildRequires:  libmp4v2-devel
+BuildRequires:  libmpcdec-devel
+BuildRequires:  libsamplerate-devel
+BuildRequires:  libvorbis-devel
+BuildRequires:  opusfile-devel
+BuildRequires:  pulseaudio-libs-devel
+BuildRequires:  systemd-devel
+BuildRequires:  wavpack-devel
+BuildRequires:  ncurses-devel
+
+
+%description
+cmus is a small, fast and powerful console music player for Unix-like
+operating systems
+
+
+%prep
+%autosetup -p1
+
+
+%build
+./configure prefix=%{_prefix} bindir=%{_bindir} datadir=%{_datadir} \
+  libdir=%{_libdir} mandir=%{_mandir} \
+  exampledir=%{_datadir}/%{name}/examples \
+  CONFIG_AAC=y \
+  CONFIG_ALSA=y \
+  CONFIG_AO=y \
+  CONFIG_ARTS=n \
+  CONFIG_CDIO=n \
+  CONFIG_CUE=y \
+  CONFIG_FFMPEG=y \
+  CONFIG_FLAC=y \
+  CONFIG_JACK=n \
+  CONFIG_MAD=y \
+  CONFIG_MIKMOD=n \
+  CONFIG_MODPLUG=y \
+  CONFIG_MP4=y \
+  CONFIG_MPC=y \
+  CONFIG_MPRIS=y \
+  CONFIG_OPUS=y \
+  CONFIG_OSS=n \
+  CONFIG_PULSE=y \
+  CONFIG_ROAR=n \
+  CONFIG_SUN=n \
+  CONFIG_VORBIS=y \
+  CONFIG_WAV=y \
+  CONFIG_WAVEOUT=n \
+  CONFIG_WAVPACK=y \
+  CFLAGS="${RPM_OPT_FLAGS}" \
+  LDFLAGS="${RPM_LD_FLAGS}"
+%{make_build} V=2
+
+
+%install
+# Using the make_install macro causes the build to fail
+make install DESTDIR=$RPM_BUILD_ROOT
+
+mv $RPM_BUILD_ROOT%{_datadir}/%{name}/examples .
+chmod -x examples/*
+
+
+%files
+%doc AUTHORS examples
+%license COPYING
+%{_bindir}/%{name}
+%{_bindir}/cmus-remote
+%{_libdir}/%{name}/
+%{_datadir}/%{name}/
+%{_mandir}/man1/cmus-remote.1*
+%{_mandir}/man1/cmus.1*
+%{_mandir}/man7/cmus-tutorial.7*
+
+
+%changelog
+* Tue Aug 06 2019 Leigh Scott <leigh123linux@gmail.com> - 2.8.0-2
+- Rebuild for new ffmpeg version
+
+* Wed Mar 27 2019 Leigh Scott <leigh123linux@googlemail.com> - 2.8.0-1
+- Update to 2.8.0 release
+
+* Mon Mar 04 2019 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 2.8.0-0.12.rc0
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
+* Thu Jul 26 2018 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 2.8.0-0.11.rc0
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Thu Mar 08 2018 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 2.8.0-0.10.rc0
+- Rebuilt for new ffmpeg snapshot
+
+* Thu Mar 08 2018 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 2.8.0-0.9.rc0
+- Rebuilt for new ffmpeg snapshot
+
+* Wed Feb 28 2018 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 2.8.0-0.8.rc0
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Thu Jan 18 2018 Leigh Scott <leigh123linux@googlemail.com> - 2.8.0-0.7.rc0
+- Rebuilt for ffmpeg-3.5 git
+
+* Fri Sep 01 2017 Leigh Scott <leigh123linux@googlemail.com> - 2.8.0-0.6.rc0
+- Fix install issue
+
+* Thu Aug 31 2017 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 2.8.0-0.5.rc0
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
+* Sat Apr 29 2017 Leigh Scott <leigh123linux@googlemail.com> - 2.8.0-0.4.rc0
+- Rebuild for ffmpeg update
+
+* Sat Mar 18 2017 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 2.8.0-0.3.rc0
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
+* Wed Mar 01 2017 Leigh Scott <leigh123linux@googlemail.com> - 2.8.0-0.2.rc0
+- Add build requires systemd-devel
+- Enable MPRIS support
+
+* Sun Dec 04 2016 leigh scott <leigh123linux@googlemail.com> - 2.8.0-0.1.rc0
+- Update to 2.8.0-rc0
+
+* Tue Aug 16 2016 Leigh Scott <leigh123linux@googlemail.com> - 2.7.1-4
+- Add build requires libsamplerate-devel and libcddb-devel
+
+* Tue Aug 16 2016 Leigh Scott <leigh123linux@googlemail.com> - 2.7.1-3
+- Fix hardening
+- Spec file fixes (rfbz#4194)
+
+* Wed Jul 27 2016 Leigh Scott <leigh123linux@googlemail.com> - 2.7.1-2
+- patch for newer ffmpeg
+
+* Fri Dec 04 2015 Sérgio Basto <sergio@serjux.com> - 2.7.1-1
+- Update to 2.7.1
+
+* Thu Jun 04 2015 Markus Rothe <markusr815@gmail.com> - 2.6.0-1
+- Update to 2.6.0
+
+* Sun Aug 31 2014 Sérgio Basto <sergio@serjux.com> - 2.5.0-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
+* Mon Sep 30 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.5.0-5
+- Rebuilt
+
+* Mon Sep 30 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.5.0-4
+- Rebuilt
+
+* Thu Aug 15 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.5.0-3
+- Rebuilt for FFmpeg 2.0.x
+
+* Sun May 26 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.5.0-2
+- Rebuilt for x264/FFmpeg
+
+* Sun Dec 30 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.5.0-1
+- Update to 2.5.0
+- Add BR libcue-devel
+
+* Tue Feb 28 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.2-4
+- Rebuilt for x264/FFmpeg
+
+* Wed Feb 08 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.2-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
+* Mon Oct 03 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.4.2-2
+- Rebuilt for FFmpeg-0.8
+
+* Tue Jul 26 2011 Conrad Meyer <konrad@tylerc.org> - 2.4.2-1
+- Bump to latest version
+- Drop ffmpeg patch (fixed in 2.4.1+)
+- Fixes some bugs
+
+* Wed May 11 2011 Conrad Meyer <konrad@tylerc.org> - 2.4.0-2
+- Include configure patch to find ffmpeg.
+
+* Mon Apr 25 2011 Johannes Weißl <jargon@molb.org> - 2.4.0-1
+- New upstream release.
+
+* Wed Apr 20 2011 Johannes Weißl <jargon@molb.org> - 2.3.5-1
+- New upstream release
+
+* Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 2.2.0-4
+- rebuild for new F11 features
+
+* Wed Dec 17 2008 Conrad Meyer <konrad@tylerc.org> - 2.2.0-3
+- Make more verbosely (V=2).
+
+* Tue Dec 16 2008 Conrad Meyer <konrad@tylerc.org> - 2.2.0-2
+- Build ffmpeg support with gentoo patch.
+- Remove libmikmod.
+
+* Sun Nov 16 2008 Conrad Meyer <konrad@tylerc.org> - 2.2.0-1
+- Initial package.
